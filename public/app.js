@@ -22,8 +22,17 @@
         newsCount: 8,
 
         /* Intervalles de rafraîchissement (ms) */
-        weatherRefreshMs: 30 * 60 * 1000,   /* 30 minutes */
-        newsRefreshMs:    15 * 60 * 1000,    /* 15 minutes */
+        weatherRefreshMs: 30 * 60 * 1000,  /* 30 minutes */
+        newsRefreshMs:    15 * 60 * 1000,  /* 15 minutes */
+        newsRotateMs:      8 * 1000,       /* rotation toutes les 8 secondes */
+
+        /* Durée max de validité du cache */
+        weatherCacheMs: 25 * 60 * 1000,   /* 25 minutes */
+        newsCacheMs:    12 * 60 * 1000,   /* 12 minutes */
+
+        /* Clés localStorage */
+        cacheKeyWeather: 'cpw_weather',
+        cacheKeyNews:    'cpw_news',
     };
 
     /* ------------------------------------------------------------------ */
@@ -64,6 +73,35 @@
     };
 
     /* ------------------------------------------------------------------ */
+    /* CACHE localStorage                                                   */
+    /* ------------------------------------------------------------------ */
+    function saveCache(key, data) {
+        try {
+            localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data: data }));
+        } catch (e) { /* navigation privée ou stockage plein */ }
+    }
+
+    /* Retourne les données si elles sont dans la fenêtre maxAgeMs, sinon null */
+    function loadCache(key, maxAgeMs) {
+        try {
+            var raw = localStorage.getItem(key);
+            if (!raw) return null;
+            var entry = JSON.parse(raw);
+            if (Date.now() - entry.ts <= maxAgeMs) return entry.data;
+            return null;
+        } catch (e) { return null; }
+    }
+
+    /* Retourne les données même périmées (pour fallback hors-ligne) */
+    function loadCacheStale(key) {
+        try {
+            var raw = localStorage.getItem(key);
+            if (!raw) return null;
+            return JSON.parse(raw).data;
+        } catch (e) { return null; }
+    }
+
+    /* ------------------------------------------------------------------ */
     /* UTILITAIRES                                                          */
     /* ------------------------------------------------------------------ */
     function pad2(n) {
@@ -97,8 +135,7 @@
             }
         };
         req.ontimeout = function () {
-            if (onError) onError('Timeout');
-        };
+            if (onError) onError('Timeout'); };
         req.onerror = function () {
             if (onError) onError('Erreur réseau');
         };
@@ -107,7 +144,6 @@
 
     function getWeatherInfo(code) {
         if (WEATHER_CODES[code]) return WEATHER_CODES[code];
-        /* Cherche la correspondance la plus proche */
         var keys = [95, 86, 85, 82, 81, 80, 77, 75, 73, 71, 67, 66, 65, 63, 61,
                     55, 53, 51, 48, 45, 3, 2, 1, 0];
         for (var i = 0; i < keys.length; i++) {
@@ -135,16 +171,13 @@
             var mon  = now.getMonth();
             var year = now.getFullYear();
 
-            /* Temps */
             el('hh').textContent = pad2(h);
             el('mm').textContent = pad2(m);
             el('ss').textContent = pad2(s);
 
-            /* Date complète */
             el('clock-date').textContent =
                 JOURS[dow] + ' ' + pad2(day) + ' ' + MOIS[mon] + ' ' + year;
 
-            /* Barre de statut : date courte */
             el('date-short').textContent =
                 pad2(day) + '/' + pad2(mon + 1) + '/' + year +
                 '  ' + pad2(h) + ':' + pad2(m);
@@ -163,6 +196,10 @@
             var self = this;
             el('sys-status').textContent = 'SYS: ONLINE';
 
+            /* Afficher le cache immédiatement pendant que la géoloc tourne */
+            var cached = loadCacheStale(CONFIG.cacheKeyWeather);
+            if (cached) Weather.render(cached, true);
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function (pos) {
@@ -173,7 +210,6 @@
                         self.fetch();
                     },
                     function () {
-                        /* Fallback sur Thionville */
                         el('location-display').textContent =
                             'LOC: ' + CONFIG.defaultCity.toUpperCase();
                         self.fetch();
@@ -186,11 +222,17 @@
                 this.fetch();
             }
 
-            /* Rafraîchissement périodique */
             setInterval(function () { self.fetch(); }, CONFIG.weatherRefreshMs);
         },
 
         fetch: function () {
+            /* Cache frais → pas besoin d'appeler l'API */
+            var cached = loadCache(CONFIG.cacheKeyWeather, CONFIG.weatherCacheMs);
+            if (cached) {
+                Weather.render(cached, false);
+                return;
+            }
+
             var url = 'https://api.open-meteo.com/v1/forecast' +
                 '?latitude='  + this.lat +
                 '&longitude=' + this.lon +
@@ -200,29 +242,40 @@
 
             xhr(url, function (data) {
                 if (data && data.current) {
-                    Weather.update(data.current);
+                    var now = new Date();
+                    var payload = {
+                        code: data.current.weather_code,
+                        temp: Math.round(data.current.temperature_2m),
+                        wind: Math.round(data.current.wind_speed_10m),
+                        hum:  data.current.relative_humidity_2m,
+                        time: formatTime(now.getHours(), now.getMinutes())
+                    };
+                    saveCache(CONFIG.cacheKeyWeather, payload);
+                    Weather.render(payload, false);
                 }
             }, function (err) {
-                el('weather-condition').textContent = 'Indisponible';
-                el('weather-condition').className = 'error-text';
+                /* Réseau indisponible → afficher cache périmé si existant */
+                var stale = loadCacheStale(CONFIG.cacheKeyWeather);
+                if (stale) {
+                    Weather.render(stale, true);
+                } else {
+                    el('weather-condition').textContent = 'Indisponible';
+                    el('weather-condition').className = 'error-text';
+                }
                 console.warn('Météo erreur:', err);
             });
         },
 
-        update: function (cur) {
-            var info = getWeatherInfo(cur.weather_code);
-            var temp = Math.round(cur.temperature_2m);
-            var wind = Math.round(cur.wind_speed_10m);
-            var hum  = cur.relative_humidity_2m;
-            var now  = new Date();
-
+        render: function (d, stale) {
+            var info = getWeatherInfo(d.code);
             el('weather-icon').textContent      = info.icon;
-            el('weather-temp').textContent      = temp + '°C';
+            el('weather-temp').textContent      = d.temp + '°C';
             el('weather-condition').textContent = info.desc;
             el('weather-condition').className   = '';
-            el('weather-wind').textContent      = 'Vent: ' + wind + ' km/h';
-            el('weather-humidity').textContent  = 'Humidité: ' + hum + '%';
-            el('weather-update').textContent    = 'MAJ: ' + formatTime(now.getHours(), now.getMinutes());
+            el('weather-wind').textContent      = 'Vent: ' + d.wind + ' km/h';
+            el('weather-humidity').textContent  = 'Humidité: ' + d.hum + '%';
+            el('weather-update').textContent    =
+                'MAJ: ' + d.time + (stale ? ' [CACHE]' : '');
         }
     };
 
@@ -230,13 +283,29 @@
     /* MODULE ACTUALITÉS                                                    */
     /* ------------------------------------------------------------------ */
     var News = {
+        items: [],
+        index: 0,
+        rotateTimer: null,
+
         init: function () {
+            /* Afficher le cache immédiatement */
+            var cached = loadCacheStale(CONFIG.cacheKeyNews);
+            if (cached && cached.length) {
+                News.store(cached);
+            }
             this.fetch();
             var self = this;
             setInterval(function () { self.fetch(); }, CONFIG.newsRefreshMs);
         },
 
         fetch: function () {
+            /* Cache frais → rotation continue sans appel réseau */
+            var cached = loadCache(CONFIG.cacheKeyNews, CONFIG.newsCacheMs);
+            if (cached && cached.length) {
+                News.store(cached);
+                return;
+            }
+
             var rssEncoded = encodeURIComponent(CONFIG.newsRssUrl);
             var url = CONFIG.newsApiBase +
                 '?rss_url=' + rssEncoded +
@@ -244,39 +313,73 @@
 
             xhr(url, function (data) {
                 if (data && data.status === 'ok' && data.items && data.items.length) {
-                    News.update(data.items);
+                    var titles = [];
+                    for (var i = 0; i < data.items.length; i++) {
+                        titles.push(data.items[i].title || '');
+                    }
+                    saveCache(CONFIG.cacheKeyNews, titles);
+                    News.store(titles);
                 } else {
-                    News.showError('Flux indisponible');
+                    News.fallback();
                 }
             }, function (err) {
-                News.showError('Actualités indisponibles');
+                /* Réseau indisponible → cache périmé */
+                var stale = loadCacheStale(CONFIG.cacheKeyNews);
+                if (stale && stale.length) {
+                    News.store(stale);
+                } else {
+                    News.fallback();
+                }
                 console.warn('News erreur:', err);
             });
         },
 
-        update: function (items) {
-            var list = el('news-list');
-            var html = '';
-            for (var i = 0; i < items.length && i < CONFIG.newsCount; i++) {
-                var title = items[i].title || '';
-                /* Échapper les caractères HTML */
-                title = title
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;');
-                html += '<li class="news-item">' + title + '</li>';
-            }
-            list.innerHTML = html;
+        store: function (titles) {
+            News.items = titles;
+            News.index = 0;
+            News.render();
+            News.startRotation();
 
             var now = new Date();
             el('news-update').textContent =
                 'MAJ: ' + formatTime(now.getHours(), now.getMinutes());
         },
 
-        showError: function (msg) {
-            el('news-list').innerHTML =
-                '<li class="news-item error-text">' + msg + '</li>';
+        render: function () {
+            var list = el('news-list');
+            var total = News.items.length;
+            if (!total) return;
+
+            /* Vider proprement sans innerHTML = '' pour éviter les layouts */
+            while (list.firstChild) {
+                list.removeChild(list.firstChild);
+            }
+
+            for (var i = 0; i < 3; i++) {
+                var idx   = (News.index + i) % total;
+                var title = News.items[idx];
+                var li    = document.createElement('li');
+                li.className = 'news-item' + (i === 0 ? ' news-active' : '');
+                li.textContent = title;   /* textContent = sécurisé (pas d'injection HTML) */
+                list.appendChild(li);
+            }
+        },
+
+        startRotation: function () {
+            if (News.rotateTimer) clearInterval(News.rotateTimer);
+            News.rotateTimer = setInterval(function () {
+                News.index = (News.index + 1) % Math.max(1, News.items.length);
+                News.render();
+            }, CONFIG.newsRotateMs);
+        },
+
+        fallback: function () {
+            var list = el('news-list');
+            while (list.firstChild) list.removeChild(list.firstChild);
+            var li = document.createElement('li');
+            li.className = 'news-item error-text';
+            li.textContent = 'Actualités indisponibles';
+            list.appendChild(li);
         }
     };
 

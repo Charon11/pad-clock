@@ -311,19 +311,31 @@ body::before {
 
 .news-item {
     font-size: 1.35vw;
-    color: #00ff41;
-    text-shadow: 0 0 4px rgba(0, 255, 65, 0.4);
+    color: rgba(0, 255, 65, 0.55);
     letter-spacing: 0.03em;
-    line-height: 1.35;
+    line-height: 1.45;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    -webkit-transition: color 0.4s ease;
+    transition: color 0.4s ease;
 }
 
 .news-item::before {
     content: '> ';
+    color: rgba(255, 0, 255, 0.45);
+}
+
+/* Titre en surbrillance (premier de la rotation) */
+.news-item.news-active {
+    color: #00ff41;
+    text-shadow: 0 0 6px rgba(0, 255, 65, 0.6);
+}
+
+.news-item.news-active::before {
+    content: '>> ';
     color: #ff00ff;
-    text-shadow: 0 0 4px rgba(255, 0, 255, 0.6);
+    text-shadow: 0 0 5px rgba(255, 0, 255, 0.8);
 }
 
 /* ---------- ÉTAT D'ERREUR ---------- */
