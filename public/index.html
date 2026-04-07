@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>PAD-CLOCK // SYSTÈME</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:700|Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- BARRE DE STATUT -->
+    <div id="status-bar">
+        <span id="sys-status" class="status-item">SYS: INIT...</span>
+        <span id="location-display" class="status-item">LOC: --</span>
+        <span id="date-short" class="status-item">DATE: --</span>
+    </div>
+
+    <!-- CONTENU PRINCIPAL -->
+    <div id="main-content">
+
+        <!-- SECTION HORLOGE -->
+        <div id="clock-section">
+            <div id="clock-time"><span id="hh">--</span><span class="sep" id="sep1">:</span><span id="mm">--</span><span class="sep" id="sep2">:</span><span id="ss">--</span></div>
+            <div id="clock-date">--- -- --- ----</div>
+        </div>
+
+        <!-- WIDGETS DU BAS -->
+        <div id="widgets-row">
+
+            <!-- WIDGET MÉTÉO -->
+            <div id="weather-widget" class="widget">
+                <div class="widget-title">// MÉTÉO</div>
+                <div id="weather-body">
+                    <div id="weather-main">
+                        <span id="weather-icon">~</span>
+                        <span id="weather-temp">--°C</span>
+                    </div>
+                    <div id="weather-condition">Localisation...</div>
+                    <div id="weather-wind">Vent: -- km/h</div>
+                    <div id="weather-humidity">Humidité: --%</div>
+                </div>
+                <div id="weather-update" class="update-time">MAJ: --:--</div>
+            </div>
+
+            <!-- WIDGET ACTUALITÉS -->
+            <div id="news-widget" class="widget">
+                <div class="widget-title">// ACTUALITÉS</div>
+                <ul id="news-list">
+                    <li class="news-item">Chargement des actualités...</li>
+                </ul>
+                <div id="news-update" class="update-time">MAJ: --:--</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+/* ============================================================
+   PAD-CLOCK — CYBERPUNK THEME
+   Compatible: iOS 9 Safari / Android 5+ Chrome
+   NO CSS variables, NO CSS Grid, NO backdrop-filter
+   ============================================================ */
+
+/* ---------- RESET & BASE ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-color: #05050f;
+    background-image:
+        -webkit-linear-gradient(rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+        -webkit-linear-gradient(left, rgba(0, 255, 255, 0.04) 1px, transparent 1px);
+    background-image:
+        linear-gradient(rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    color: #cccccc;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+/* Effet scanlines */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.12) 3px,
+        rgba(0, 0, 0, 0.12) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ---------- BARRE DE STATUT ---------- */
+#status-bar {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 36px;
+    background-color: #0a0a1a;
+    border-bottom: 1px solid #ff00ff;
+    -webkit-box-shadow: 0 0 12px rgba(255, 0, 255, 0.4);
+    box-shadow: 0 0 12px rgba(255, 0, 255, 0.4);
+    padding: 0 16px;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+
+.status-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #ff00ff;
+    text-shadow: 0 0 6px rgba(255, 0, 255, 0.8);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ---------- CONTENU PRINCIPAL ---------- */
+#main-content {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: hidden;
+    padding: 0 16px 10px;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+/* ---------- SECTION HORLOGE ---------- */
+#clock-section {
+    -webkit-flex: 1;
+    flex: 1;
+    min-height: 0;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+#clock-time {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 15vw;
+    color: #00ffff;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 25px #00ffff,
+        0 0 50px rgba(0, 255, 255, 0.5);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.sep {
+    display: inline-block;
+    -webkit-animation: blink 1s step-end infinite;
+    animation: blink 1s step-end infinite;
+    color: #00cccc;
+}
+
+@-webkit-keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+}
+
+#clock-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2.4vw;
+    color: #00ff41;
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.7);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+/* ---------- WIDGETS DU BAS ---------- */
+#widgets-row {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 32%;
+    min-height: 160px;
+    max-height: 280px;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.widget {
+    -webkit-flex: 1;
+    flex: 1;
+    border: 1px solid #ff00ff;
+    -webkit-box-shadow:
+        0 0 10px rgba(255, 0, 255, 0.35),
+        inset 0 0 15px rgba(255, 0, 255, 0.06);
+    box-shadow:
+        0 0 10px rgba(255, 0, 255, 0.35),
+        inset 0 0 15px rgba(255, 0, 255, 0.06);
+    background-color: rgba(10, 5, 25, 0.9);
+    padding: 10px 14px 8px;
+    overflow: hidden;
+    position: relative;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.widget-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: #ff00ff;
+    text-shadow: 0 0 6px rgba(255, 0, 255, 0.9);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+}
+
+.update-time {
+    font-size: 10px;
+    color: rgba(0, 255, 255, 0.4);
+    letter-spacing: 0.06em;
+    margin-top: auto;
+    padding-top: 4px;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+}
+
+/* ---------- WIDGET MÉTÉO ---------- */
+#weather-widget {
+    -webkit-flex: 0 0 28%;
+    flex: 0 0 28%;
+    max-width: 300px;
+}
+
+#weather-body {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: hidden;
+}
+
+#weather-main {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: baseline;
+    -webkit-align-items: baseline;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+#weather-icon {
+    font-size: 2.8vw;
+    line-height: 1;
+}
+
+#weather-temp {
+    font-family: 'Orbitron', monospace;
+    font-size: 3.5vw;
+    color: #00ffff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+    font-weight: 700;
+}
+
+#weather-condition {
+    font-size: 1.6vw;
+    color: #00ff41;
+    text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+#weather-wind,
+#weather-humidity {
+    font-size: 1.3vw;
+    color: #aaaaaa;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+}
+
+/* ---------- WIDGET ACTUALITÉS ---------- */
+#news-widget {
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+#news-list {
+    list-style: none;
+    overflow: hidden;
+    -webkit-flex: 1;
+    flex: 1;
+    padding: 0;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.news-item {
+    font-size: 1.35vw;
+    color: #00ff41;
+    text-shadow: 0 0 4px rgba(0, 255, 65, 0.4);
+    letter-spacing: 0.03em;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.news-item::before {
+    content: '> ';
+    color: #ff00ff;
+    text-shadow: 0 0 4px rgba(255, 0, 255, 0.6);
+}
+
+/* ---------- ÉTAT D'ERREUR ---------- */
+.error-text {
+    color: #ff4444;
+    text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
+}
+
+/* ---------- ORIENTATION PORTRAIT (avertissement) ---------- */
+@media (orientation: portrait) {
+    #clock-time {
+        font-size: 18vw;
+    }
+    #clock-date {
+        font-size: 3.5vw;
+    }
+    #weather-widget {
+        -webkit-flex: 0 0 40%;
+        flex: 0 0 40%;
+        max-width: none;
+    }
+    #weather-temp {
+        font-size: 5vw;
+    }
+    #weather-icon {
+        font-size: 5vw;
+    }
+    #weather-condition,
+    #weather-wind,
+    #weather-humidity {
+        font-size: 2.5vw;
+    }
+    .news-item {
+        font-size: 2vw;
+    }
+    .status-item {
+        font-size: 11px;
+    }
+}
