@@ -233,12 +233,9 @@
                 return;
             }
 
-            var url = 'https://api.open-meteo.com/v1/forecast' +
-                '?latitude='  + this.lat +
-                '&longitude=' + this.lon +
-                '&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m' +
-                '&wind_speed_unit=kmh' +
-                '&timezone=auto';
+            /* Proxy server-side pour éviter les erreurs SSL sur anciens Android
+               (Nexus 7, etc.) qui ne font pas confiance aux certs Let's Encrypt */
+            var url = '/api/weather?lat=' + this.lat + '&lon=' + this.lon;
 
             xhr(url, function (data) {
                 if (data && data.current) {
