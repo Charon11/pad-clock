@@ -160,20 +160,37 @@ body::before {
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum';
     text-align: center;
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
 }
 
 #hh,
 #mm,
 #ss {
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: inline-flex;
+}
+
+.d {
     display: inline-block;
-    width: 1.7em;
+    width: 0.85em;
     text-align: center;
 }
 
 .sep {
     display: inline-block;
-    width: 0.28em;
+    width: 0.4em;
+    margin: 0 0.02em;
     text-align: center;
+    line-height: 0.82;
     -webkit-animation: blink 1s step-end infinite;
     animation: blink 1s step-end infinite;
     color: #00cccc;
