@@ -18,19 +18,17 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Write service account credentials
-        run: echo "$FIREBASE_SA" > /tmp/gcp-sa.json
+      - name: Deploy function to Firebase 
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+          # repoToken: '${{ secrets.GITHUB_TOKEN }}' # Not typically needed for w9jds/firebase-action
+          # firebaseServiceAccount: '' # Not needed if using FIREBASE_TOKEN
+          # channelId: live # Not a standard input for w9jds/firebase-action, deployment is usually to live
+          projectId: tab-clock # Your Firebase project ID from firebase.json
+          # The w9jds/firebase-action typically uses FIREBASE_TOKEN environment variable directly
         env:
-          FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TAB_CLOCK }}
-
-      - name: Deploy Firebase Functions
-        run: |
-          npm install --prefix functions
-          npm install -g firebase-tools
-          firebase deploy --only functions --project tab-clock
-          rm -f /tmp/gcp-sa.json
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-sa.json
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TAB_CLOCK }}
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
