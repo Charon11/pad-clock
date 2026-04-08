@@ -1,0 +1,12 @@
+{
+  "name": "pad-clock-functions",
+  "description": "Firebase Functions pour pad-clock (proxy météo)",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "firebase-functions": "^7.2.4"
+  },
+  "private": true
+}
