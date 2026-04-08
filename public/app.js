@@ -233,11 +233,10 @@
                 return;
             }
 
-            /* Proxy Cloudflare Workers : évite les erreurs SSL sur anciens Android
-               (Nexus 7, etc.) qui ne font pas confiance aux certs Let's Encrypt.
-               Cloudflare utilise DigiCert, reconnu par Android 4.0+. */
-            var url = 'https://pad-clock-weather.chardin-renaud.workers.dev' +
-                '?lat=' + this.lat + '&lon=' + this.lon;
+            /* Proxy Firebase Function : le device appelle uniquement Firebase
+               (cert Google, reconnu même par les très anciens Android).
+               La Function contacte Open-Meteo côté serveur. */
+            var url = '/api/weather?lat=' + this.lat + '&lon=' + this.lon;
 
             xhr(url, function (data) {
                 if (data && data.current) {
