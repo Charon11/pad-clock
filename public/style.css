@@ -154,13 +154,26 @@ body::before {
         0 0 10px #00ffff,
         0 0 25px #00ffff,
         0 0 50px rgba(0, 255, 255, 0.5);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
     line-height: 1;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    text-align: center;
+}
+
+#hh,
+#mm,
+#ss {
+    display: inline-block;
+    width: 1.7em;
+    text-align: center;
 }
 
 .sep {
     display: inline-block;
+    width: 0.28em;
+    text-align: center;
     -webkit-animation: blink 1s step-end infinite;
     animation: blink 1s step-end infinite;
     color: #00cccc;
