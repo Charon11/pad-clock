@@ -17,6 +17,7 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
+        working-directory: ./functions
         run: npm ci
       - name: Deploy function to Firebase 
         uses: w9jds/firebase-action@master
