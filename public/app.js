@@ -17,18 +17,18 @@
         defaultCity: 'Thionville',
 
         /* Flux RSS via rss2json (sans clé = plan gratuit, ~10k req/mois) */
-        newsRssUrl: 'https://ici.radio-canada.ca/rss/4159',
+        newsRssUrl: 'https://www.franceinfo.fr/titres.rss',
         newsApiBase: 'https://api.rss2json.com/v1/api.json',
         newsCount: 8,
 
         /* Intervalles de rafraîchissement (ms) */
         weatherRefreshMs: 30 * 60 * 1000,  /* 30 minutes */
         newsRefreshMs:    15 * 60 * 1000,  /* 15 minutes */
-        newsRotateMs:      8 * 1000,       /* rotation toutes les 8 secondes */
+        newsRotateMs:      15 * 1000,       /* rotation toutes les 8 secondes */
 
         /* Durée max de validité du cache */
         weatherCacheMs: 25 * 60 * 1000,   /* 25 minutes */
-        newsCacheMs:    12 * 60 * 1000,   /* 12 minutes */
+        newsCacheMs:    10 * 60 * 1000,   /* 12 minutes */
 
         /* Clés localStorage */
         cacheKeyWeather: 'cpw_weather',
@@ -308,8 +308,7 @@
 
             var rssEncoded = encodeURIComponent(CONFIG.newsRssUrl);
             var url = CONFIG.newsApiBase +
-                '?rss_url=' + rssEncoded +
-                '&count='   + CONFIG.newsCount;
+                '?rss_url=' + rssEncoded;
 
             xhr(url, function (data) {
                 if (data && data.status === 'ok' && data.items && data.items.length) {
