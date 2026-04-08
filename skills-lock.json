@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "commit-push-pr": {
+      "source": "llama-farm/llamafarm",
+      "sourceType": "github",
+      "computedHash": "3b462d271903ef4ec5073ecba711439a9df546f920505e8972e622e031ba3132"
+    }
+  }
+}
