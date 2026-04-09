@@ -12,7 +12,27 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        working-directory: ./functions
+        run: npm ci
+      - name: Deploy function to Firebase 
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+          # repoToken: '${{ secrets.GITHUB_TOKEN }}' # Not typically needed for w9jds/firebase-action
+          # firebaseServiceAccount: '' # Not needed if using FIREBASE_TOKEN
+          # channelId: live # Not a standard input for w9jds/firebase-action, deployment is usually to live
+          projectId: tab-clock # Your Firebase project ID from firebase.json
+          # The w9jds/firebase-action typically uses FIREBASE_TOKEN environment variable directly
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
