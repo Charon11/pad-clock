@@ -233,12 +233,15 @@
                 return;
             }
 
-            /* Proxy Firebase Function : le device appelle uniquement Firebase
-               (cert Google, reconnu même par les très anciens Android).
-               La Function contacte Open-Meteo côté serveur. */
-            var url = '/api/weather?lat=' + this.lat + '&lon=' + this.lon;
+            /* Appel direct Open-Meteo en premier (moderne + rapide).
+               Fallback vers le proxy Firebase si SSL échoue (Nexus 7, Android < 7.1). */
+            var directUrl = 'https://api.open-meteo.com/v1/forecast' +
+                '?latitude=' + this.lat + '&longitude=' + this.lon +
+                '&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m' +
+                '&wind_speed_unit=kmh&timezone=auto';
+            var proxyUrl = '/api/weather?lat=' + this.lat + '&lon=' + this.lon;
 
-            xhr(url, function (data) {
+            function onSuccess(data) {
                 if (data && data.current) {
                     var now = new Date();
                     var payload = {
@@ -251,7 +254,9 @@
                     saveCache(CONFIG.cacheKeyWeather, payload);
                     Weather.render(payload, false);
                 }
-            }, function (err) {
+            }
+
+            function onFinalError(err) {
                 /* Réseau indisponible → afficher cache périmé si existant */
                 var stale = loadCacheStale(CONFIG.cacheKeyWeather);
                 if (stale) {
@@ -260,7 +265,12 @@
                     el('weather-condition').textContent = 'Indisponible';
                     el('weather-condition').className = 'error-text';
                 }
-                console.warn('Météo erreur:', err);
+                console.warn('Météo erreur (proxy aussi):', err);
+            }
+
+            xhr(directUrl, onSuccess, function (err) {
+                console.warn('Météo direct échoué, fallback proxy:', err);
+                xhr(proxyUrl, onSuccess, onFinalError);
             });
         },
 
