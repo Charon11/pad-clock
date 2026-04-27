@@ -112,6 +112,19 @@
         return document.getElementById(id);
     }
 
+    function applyLegacyLayoutClass() {
+        var ua = navigator.userAgent || '';
+        var iosMatch = ua.match(/OS (\d+)_/);
+        var isIOS = /iPad|iPhone|iPod/.test(ua);
+        var major = iosMatch ? parseInt(iosMatch[1], 10) : 999;
+
+        /* iOS 8 Safari: fallback layout sans dépendre du centrage flex */
+        if (isIOS && major <= 8) {
+            document.documentElement.className +=
+                (document.documentElement.className ? ' ' : '') + 'ios8-legacy-layout';
+        }
+    }
+
     function formatTime(h, m) {
         return pad2(h) + ':' + pad2(m);
     }
@@ -394,6 +407,7 @@
     /* DÉMARRAGE                                                            */
     /* ------------------------------------------------------------------ */
     function init() {
+        applyLegacyLayoutClass();
         Clock.init();
         Weather.init();
         News.init();
