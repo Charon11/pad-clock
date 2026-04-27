@@ -273,27 +273,35 @@ body::before {
 }
 
 /* ---------- FALLBACK iOS 8 SAFARI (iPad 2) ---------- */
-/* Évite un layout dépendant du centrage flex pour l'horloge */
+/* Layout piloté en JS (hauteurs en px) pour éviter les bugs flex iOS 8 */
 html.ios8-legacy-layout #main-content {
-    position: relative;
+    display: block;
+    overflow: hidden;
 }
 
 html.ios8-legacy-layout #clock-section {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 70%;
+    -webkit-flex: none;
+    flex: none;
     padding-top: 0;
     padding-bottom: 0;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
 }
 
 html.ios8-legacy-layout #widgets-row {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 30%;
+    -webkit-flex: none;
+    flex: none;
+    height: auto;
+    min-height: 0;
+    max-height: none;
     margin-top: 0;
 }
 
