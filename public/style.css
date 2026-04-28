@@ -375,10 +375,11 @@ html.ios8-legacy-layout #widgets-row {
 
 /* ---------- WIDGET MÉTÉO ---------- */
 #weather-widget {
-    -webkit-flex: 0 0 28%;
-    flex: 0 0 28%;
-    max-width: 300px;
-    min-width: 0;
+    -webkit-flex: 0 0 185px;
+    flex: 0 0 185px;
+    width: 185px;
+    min-width: 185px;
+    max-width: 185px;
 }
 
 #weather-body {
@@ -436,8 +437,8 @@ html.ios8-legacy-layout #widgets-row {
 
 /* ---------- WIDGET ACTUALITÉS ---------- */
 #news-widget {
-    -webkit-flex: 1;
-    flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
     min-width: 0;
 }
 
@@ -542,6 +543,8 @@ html.ios8-legacy-layout #widgets-row {
     #weather-widget {
         -webkit-flex: 0 0 40%;
         flex: 0 0 40%;
+        width: auto;
+        min-width: 0;
         max-width: none;
     }
     #weather-temp {
