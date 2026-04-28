@@ -112,6 +112,49 @@
         return document.getElementById(id);
     }
 
+    function applyLegacyLayoutClass() {
+        var ua = navigator.userAgent || '';
+        var iosMatch = ua.match(/OS (\d+)_/);
+        var isIOS = /iPad|iPhone|iPod/.test(ua);
+        var major = iosMatch ? parseInt(iosMatch[1], 10) : 999;
+
+        /* iOS 8 Safari: fallback layout sans dépendre du centrage flex */
+        if (isIOS && major <= 8) {
+            document.documentElement.className +=
+                (document.documentElement.className ? ' ' : '') + 'ios8-legacy-layout';
+        }
+    }
+
+    function hasLegacyLayoutClass() {
+        return /(^|\s)ios8-legacy-layout(\s|$)/.test(document.documentElement.className);
+    }
+
+    function applyLegacyLayoutSizing() {
+        if (!hasLegacyLayoutClass()) return;
+
+        var statusBar = el('status-bar');
+        var main = el('main-content');
+        var clock = el('clock-section');
+        var widgets = el('widgets-row');
+        if (!statusBar || !main || !clock || !widgets) return;
+
+        var viewportH = window.innerHeight || document.documentElement.clientHeight || 0;
+        var statusH = statusBar.offsetHeight || 0;
+        var mainH = viewportH - statusH;
+        if (mainH < 200) mainH = 200;
+
+        var widgetsH = Math.round(mainH * 0.32);
+        if (widgetsH < 150) widgetsH = 150;
+        if (widgetsH > 240) widgetsH = 240;
+
+        var clockH = mainH - widgetsH;
+        if (clockH < 120) clockH = 120;
+
+        main.style.height = mainH + 'px';
+        clock.style.height = clockH + 'px';
+        widgets.style.height = widgetsH + 'px';
+    }
+
     function formatTime(h, m) {
         return pad2(h) + ':' + pad2(m);
     }
@@ -394,9 +437,16 @@
     /* DÉMARRAGE                                                            */
     /* ------------------------------------------------------------------ */
     function init() {
+        applyLegacyLayoutClass();
+        applyLegacyLayoutSizing();
         Clock.init();
         Weather.init();
         News.init();
+
+        if (hasLegacyLayoutClass()) {
+            window.addEventListener('resize', applyLegacyLayoutSizing);
+            window.addEventListener('orientationchange', applyLegacyLayoutSizing);
+        }
     }
 
     if (document.readyState === 'loading') {

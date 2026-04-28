@@ -96,6 +96,9 @@ body::before {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #location-display {
@@ -115,6 +118,7 @@ body::before {
     flex: 1;
     overflow: hidden;
     padding: 0 16px 10px;
+    min-height: 0;
 
     display: -webkit-box;
     display: -webkit-flex;
@@ -127,9 +131,11 @@ body::before {
 
 /* ---------- SECTION HORLOGE ---------- */
 #clock-section {
-    -webkit-flex: 1;
-    flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
     min-height: 0;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
 
     display: -webkit-box;
     display: -webkit-flex;
@@ -249,9 +255,11 @@ body::before {
 #widgets-row {
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
-    height: 32%;
-    min-height: 160px;
-    max-height: 280px;
+    height: 30%;
+    min-height: 150px;
+    max-height: 240px;
+    width: 100%;
+    margin-top: auto;
 
     display: -webkit-box;
     display: -webkit-flex;
@@ -261,9 +269,51 @@ body::before {
     -webkit-flex-direction: row;
     flex-direction: row;
     gap: 12px;
+    min-width: 0;
+    margin-left: -6px;
+    margin-right: -6px;
+}
+
+#widgets-row .widget {
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+/* ---------- FALLBACK iOS 8 SAFARI (iPad 2) ---------- */
+/* Layout piloté en JS (hauteurs en px) pour éviter les bugs flex iOS 8 */
+html.ios8-legacy-layout #main-content {
+    display: block;
+    overflow: hidden;
+}
+
+html.ios8-legacy-layout #clock-section {
+    -webkit-flex: none;
+    flex: none;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+html.ios8-legacy-layout #widgets-row {
+    -webkit-flex: none;
+    flex: none;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin-top: 0;
 }
 
 .widget {
+    -webkit-box-flex: 1;
     -webkit-flex: 1;
     flex: 1;
     border: 1px solid #e84c3d;
@@ -287,6 +337,7 @@ body::before {
     -webkit-box-direction: normal;
     -webkit-flex-direction: column;
     flex-direction: column;
+    min-width: 0;
 }
 
 .widget::before {
@@ -332,9 +383,12 @@ body::before {
 
 /* ---------- WIDGET MÉTÉO ---------- */
 #weather-widget {
+    -webkit-box-flex: 0;
     -webkit-flex: 0 0 28%;
     flex: 0 0 28%;
+    width: 28%;
     max-width: 300px;
+    min-width: 0;
 }
 
 #weather-body {
@@ -374,6 +428,9 @@ body::before {
     margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #weather-wind,
@@ -382,12 +439,47 @@ body::before {
     color: #aaaaaa;
     letter-spacing: 0.04em;
     line-height: 1.6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ---------- WIDGET ACTUALITÉS ---------- */
 #news-widget {
+    -webkit-box-flex: 1;
     -webkit-flex: 1;
     flex: 1;
+    width: auto;
+    min-width: 0;
+}
+
+/* ---------- ÉCRANS LARGES (desktop de debug) ---------- */
+/* Garde un ratio lisible météo/actus + réduit l'horloge trop dominante */
+@media (min-width: 1200px) and (orientation: landscape) {
+    #clock-time {
+        font-size: 11vw;
+    }
+
+    #widgets-row {
+        height: 34%;
+        min-height: 210px;
+        max-height: 320px;
+    }
+
+    #weather-widget {
+        -webkit-flex: 0 0 34%;
+        flex: 0 0 34%;
+        width: 34%;
+        max-width: 420px;
+    }
+
+    #weather-temp {
+        font-size: 2.6vw;
+    }
+
+    #weather-icon {
+        font-size: 2.1vw;
+    }
 }
 
 #news-list {
@@ -405,19 +497,26 @@ body::before {
     -webkit-flex-direction: column;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
 }
 
 /* ---------- COMPAT SAFARI iOS ANCIEN (iPad 2 / iOS 9) ---------- */
 /* Pas de gap flex natif + rendu fragile de clip-path sur WebKit ancien */
-@supports not (gap: 1px) {
+@supports (gap: 1px) {
     #widgets-row {
-        margin-left: -6px;
-        margin-right: -6px;
+        margin-left: 0;
+        margin-right: 0;
     }
 
     #widgets-row .widget {
-        margin-left: 6px;
-        margin-right: 6px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@supports not (gap: 1px) {
+    #widgets-row {
+        gap: 0;
     }
 
     #weather-main > * + * {
@@ -452,6 +551,8 @@ body::before {
     -webkit-line-clamp: 2;
     white-space: normal;
     word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     text-overflow: ellipsis;
     -webkit-transition: color 0.4s ease;
     transition: color 0.4s ease;
