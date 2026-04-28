@@ -144,8 +144,8 @@
         if (mainH < 200) mainH = 200;
 
         var widgetsH = Math.round(mainH * 0.32);
-        if (widgetsH < 150) widgetsH = 150;
-        if (widgetsH > 240) widgetsH = 240;
+        if (widgetsH < 160) widgetsH = 160;
+        if (widgetsH > 280) widgetsH = 280;
 
         var clockH = mainH - widgetsH;
         if (clockH < 120) clockH = 120;
