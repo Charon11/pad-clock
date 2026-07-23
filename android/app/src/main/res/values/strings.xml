@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tab Clock</string>
+    <string name="title_activity_main">Tab Clock</string>
+    <string name="package_name">org.charon.tabclock</string>
+    <string name="custom_url_scheme">org.charon.tabclock</string>
+</resources>

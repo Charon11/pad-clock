@@ -1,0 +1,16 @@
+{
+  "name": "pad-clock",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Android APK wrapper (Capacitor) for the pad-clock tablet dashboard",
+  "scripts": {
+    "cap:sync": "cap sync android",
+    "cap:open": "cap open android"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "typescript": "^5.9.3"
+  }
+}
