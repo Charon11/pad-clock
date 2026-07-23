@@ -29,6 +29,14 @@ Puis soit :
   ```
   L'APK est généré dans `android/app/build/outputs/apk/debug/app-debug.apk`.
 
+## CI — build + distribution
+
+Le workflow `.github/workflows/android-build.yml` (déclenchement manuel, onglet Actions) :
+1. build l'APK debug et le publie comme artifact de workflow (`tab-clock-debug-apk`)
+2. l'envoie ensuite sur **Firebase App Distribution** (app Firebase `1:402746265461:android:1db8157a0bf23d0ed10d3c`) via `w9jds/firebase-action` (même action et même secret `FIREBASE_TOKEN` que le déploiement des functions dans `firebase-hosting-merge.yml`).
+
+Au déclenchement manuel, deux champs optionnels : `release_notes` et `testers_groups` (alias de groupe(s) de testeurs Firebase App Distribution, séparés par des virgules). Si `testers_groups` est vide, le build est uploadé sans notifier de testeurs (il reste consultable dans la console Firebase).
+
 ## Installer sur le Nexus 7
 
 ```bash
