@@ -46,15 +46,13 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload to Firebase App Distribution
+        uses: w9jds/firebase-action@master
+        with:
+          args: >-
+            appdistribution:distribute android/app/build/outputs/apk/debug/app-debug.apk
+            --app 1:402746265461:android:1db8157a0bf23d0ed10d3c
+            ${{ inputs.release_notes != '' && format('--release-notes "{0}"', inputs.release_notes) || '' }}
+            ${{ inputs.testers_groups != '' && format('--groups "{0}"', inputs.testers_groups) || '' }}
+          projectId: tab-clock
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          RELEASE_NOTES: ${{ inputs.release_notes }}
-          TESTER_GROUPS: ${{ inputs.testers_groups }}
-        run: |
-          args=(
-            android/app/build/outputs/apk/debug/app-debug.apk
-            --app 1:402746265461:android:1db8157a0bf23d0ed10d3c
-          )
-          if [ -n "$RELEASE_NOTES" ]; then args+=(--release-notes "$RELEASE_NOTES"); fi
-          if [ -n "$TESTER_GROUPS" ]; then args+=(--groups "$TESTER_GROUPS"); fi
-          npx --yes firebase-tools appdistribution:distribute "${args[@]}"

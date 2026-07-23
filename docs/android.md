@@ -33,7 +33,7 @@ Puis soit :
 
 Le workflow `.github/workflows/android-build.yml` (déclenchement manuel, onglet Actions) :
 1. build l'APK debug et le publie comme artifact de workflow (`tab-clock-debug-apk`)
-2. l'envoie ensuite sur **Firebase App Distribution** (app Firebase `1:402746265461:android:1db8157a0bf23d0ed10d3c`), via `firebase-tools appdistribution:distribute`, authentifié avec le secret `FIREBASE_TOKEN` déjà utilisé par `firebase-hosting-merge.yml`.
+2. l'envoie ensuite sur **Firebase App Distribution** (app Firebase `1:402746265461:android:1db8157a0bf23d0ed10d3c`) via `w9jds/firebase-action` (même action et même secret `FIREBASE_TOKEN` que le déploiement des functions dans `firebase-hosting-merge.yml`).
 
 Au déclenchement manuel, deux champs optionnels : `release_notes` et `testers_groups` (alias de groupe(s) de testeurs Firebase App Distribution, séparés par des virgules). Si `testers_groups` est vide, le build est uploadé sans notifier de testeurs (il reste consultable dans la console Firebase).
 
